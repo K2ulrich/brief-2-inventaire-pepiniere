@@ -38,7 +38,7 @@ export function verifierPlant(saisie, plants) {
   if (id === '') {
     erreurs.push('Le code est obligatoire.');
   } else if (trouverParId(plants, saisie.id) !== undefined) {
-    erreurs.push(`Le code ${saisie.id} existe déjà .`);
+    erreurs.push(`Le code ${id} existe déjà .`);
   }
 
   if (String(saisie.nomCommun).trim() === '') {
@@ -50,7 +50,7 @@ export function verifierPlant(saisie, plants) {
   }
 
   const nombrePlants = versNombre(saisie.nombrePlants);
-  if (Number.isNaN(nombre) ||!Number.isInteger(nombre) || nombre < 0) {
+  if (Number.isNaN(nombrePlants) || !Number.isInteger(nombrePlants) || nombrePlants < 0) {
     erreurs.push('Le nombre de plants doit être un entier positif ou nul.');
   }
 
