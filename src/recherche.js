@@ -4,8 +4,8 @@
 // Renvoie un NOUVEAU tableau avec les plants dont le nom commun CONTIENT le texte cherché,
 // sans tenir compte des majuscules : 'PALM' trouve 'palmier à huile'. Éventuellement vide.
 export function rechercherParNom(plants, texte) {
-  const recherche = String(texte ?? '').toLocaleLowerCase();
-  return plants.filter(plant => plant.nomCommun.toLocaleLowerCase().includes(recherche));
+  const recherche = String(texte ?? '').toLowerCase();
+  return plants.filter(plant => plant.nomCommun.toLowerCase().includes(recherche));
 }
 
 // Renvoie un NOUVEAU tableau avec les plants de ce groupe botanique (éventuellement vide).
