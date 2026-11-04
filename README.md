@@ -4,7 +4,11 @@
 
 ## Contexte
 
-L'outil est destiné à un responsable d'une pepinière pédagogique, qui compte des plants étiquetés de plusieurs espèces et applique la classification botanique fournie par le coach agronomie (angiospermes ou gymnospermes). Son besoin est de retrouver une espèce, lire son groupe botanique et voir les quantités disponibles, alors que son inventaire est dispersé. Ce programme à pour but de faciliter son travail. Il saisit un code, un nom commun, un groupe, un nombre de plants et la date du relevé. Le programme lui affiche l'inventaire, les resultats de recherche et de tri, et une synthèse (stock total, quantités par groupe, espèce la plus abondante, stocks faibles). L'outil ne reconnait pas les espèces : le groupe est saisi tel que fourni par le coach, et il ne donne aucune consigne de production.
+L'outil est destiné à un responsable d'une pepinière pédagogique, qui compte des plants étiquetés de plusieurs espèces et applique la classification botanique fournie par le coach agronomie (angiospermes ou gymnospermes). 
+
+Son besoin est de retrouver une espèce, lire son groupe botanique et voir les quantités disponibles, alors que son inventaire est dispersé. Ce programme à pour but de faciliter son travail. Il saisit un code, un nom commun, un groupe, un nombre de plants et la date du relevé. 
+
+Le programme lui affiche l'inventaire, les resultats de recherche et de tri, et une synthèse (stock total, quantités par groupe, espèce la plus abondante, stocks faibles). L'outil ne reconnait pas les espèces : le groupe est saisi tel que fourni par le coach, et il ne donne aucune consigne de production.
 
 ## Prérequis et lancement
 
@@ -18,7 +22,12 @@ npm test
 ```
 
 Sous PowerShell, si `npm` est bloqué : `npm.cmd test`.
-
+git init 
+git add .
+git commit -m "depart du brief 2: Kit fourni"
+git branch -M main 
+git remote add origin https://github.com/VOTRE-COMPTE/brief-2-inventaire-pepiniere.git
+git push -u origin main
 ## Fonctionnalités
 
 ✏️ *Cochez seulement ce qui marche : `- [x]`.*
@@ -40,11 +49,11 @@ Fichier `donnees/plants.json` : 10 lignes au depart ( une ligne = une espèce et
 
 ## Limites
 
-✏️ *Au moins trois. Par exemple : le seuil de 10 plants est un repère de suivi, pas une recommandation de production.*
-
-Les groupes botaniques sont fournis et validés par le coach, le programme n'identifie aucune espèce.
-Un seul utilisateur à la fois, le fichier JSON n'est pas protégé contre une modification simultanée.
-Pas d'historique des relevés : une ligne ne garde que sa dernière date.
+- Le seuil de 10 plants est un repère de suivi pédagogique, pas une recommandation de production.
+- Les groupes botaniques sont fournis et validés par le coach : le programme n'identifie aucune espèce.
+- Un seul utilisateur à la fois ; le fichier JSON n'est pas protégé contre une modification simultanée.
+- Pas d'historique : chaque espèce a une seule ligne avec une seule date de relevé.
+- Sans le bonus, le programme ne permet pas de corriger ou de supprimer une espèce déjà enregistrée : il faut modifier `donnees/plants.json` à la main.
 
 ## Documents
 
