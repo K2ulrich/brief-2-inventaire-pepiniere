@@ -67,4 +67,51 @@ async function ajouter(plants) {
     }
     console.log(`L'inventaire compte ${plants.length} espèce(s).`);
   }
-} 
+}
+
+function lister(plants) {
+  console.log('--- Inventaire (${plants.length}) espèce(s) ---');
+  console.log(listerPlants(plants));
+}
+
+async function rechercher(plants) {
+  console.log('--- Rechercher ---');
+  console.log('1. par code');
+  console.log('2. par nom commun');
+  console.log("3. Les espèces d'un groupe botanique");
+  const choix = await demander('Votre choix : ');
+  if (choix === null) {
+    return;
+  }
+  
+  if (choix === '1') {
+    const reponse = await demander('Code : ');
+    if (reponse === null) {
+      return;
+    }
+    const id = reponse.toUpperCase();
+    const plant = trouverParId(plants, id);
+    console.log(plant === undefined ? `Plants ${id} introuvable.` : formaterPlant(plant));
+  } else if (choix === '2') {
+    const reponse = await demander('Nom ou partie du nom  : ');
+    if (reponse === null) {
+      return;
+    }
+    const nom = reponse.toLowerCase();
+    const resultats = rechercherParNom(plants, texte);
+    console.log(`${trouves.length} espèce(s) dont le nom contient « "${texte}" » :`);
+    console.log(listerPlants(trouves));
+  } else if (choix === '3') {
+    const reponse = await demander(`Groupe botanique (${GROUPES.join(' ou ')}) : `);
+    if (reponse === null) {
+      return;
+    }
+    const groupe = reponse.toLowerCase();
+    const trouves = filtrerParGroupe(plants, groupe);
+    console.log(`${trouves.length} espèce(s) du groupe "${groupe}" :`);
+    console.log(listerPlants(trouves));
+  } else {
+    console.log('Choix inconnu : retour au menu.');
+  }
+}
+
