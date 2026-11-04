@@ -7,6 +7,7 @@ import { chargerJson, enregistrerJson } from './src/stockage.js';
 import { GROUPES, ajouterPlant, formaterPlant, listerPlants, trouverParId } from './src/registre.js';
 import { filtrerParGroupe, rechercherParNom, trierParNombrePlants } from './src/recherche.js';
 import { SEUIL_STOCK_FAIBLE, especeLaPlusAbondante, stocksFaibles, syntheseParGroupe, totalPlants } from './src/synthese.js';
+import { groupeLePlusFourni, modifierPlant, supprimerPlant, trierParNombrePlantsDecroissant } from './src/bonus.js';
 
 const FICHIER_DONNEES = 'donnees/plants.json';
 
@@ -18,14 +19,14 @@ function afficherAccueil() {
 }
 
 function afficherMenu() {
-  console.log('\n-------------------- MENU --------------------');
+  console.log('\n--------------------- MENU ---------------------');
   console.log('1. Ajouter un plant');
   console.log("2. Lister l'inventaire");
   console.log('3. Rechercher (code, nom, groupe)');
   console.log('4. Trier (nombre de plants)');
-  console.log('5. Synthèse des quantités)');
+  console.log('5. Synthèse des quantités');
   console.log('6. Supprimer un plant');
-  console.log('7. modifier un plant');
+  console.log('7. Modifier un plant');
   console.log('0. Quitter');
 }
 
@@ -34,7 +35,7 @@ async function ajouter(plants) {
   const questions = [
     ['id', 'Code du plant (ex. N11) : '],
     ['nomCommun', 'Nom commun (ex. Papayer) : '],
-    ['groupe', `Groupe botanique(${GROUPES.join('ou ')}) : `],
+    ['groupe', `Groupe botanique (${GROUPES.join(' ou ')}) : `],
     ['nombrePlants', 'Nombre de plants (entier) : '],
     ['dateReleve', 'Date de relevé (AAAA-MM-JJ) : '],
   ];
@@ -70,7 +71,7 @@ async function ajouter(plants) {
 }
 
 function lister(plants) {
-  console.log('--- Inventaire (${plants.length}) espèce(s) ---');
+  console.log(`--- Inventaire (${plants.length} espèce(s)) ---`);
   console.log(listerPlants(plants));
 }
 
@@ -98,9 +99,9 @@ async function rechercher(plants) {
       return;
     }
     const nom = reponse.toLowerCase();
-    const resultats = rechercherParNom(plants, texte);
-    console.log(`${trouves.length} espèce(s) dont le nom contient « "${texte}" » :`);
-    console.log(listerPlants(trouves));
+    const resultats = rechercherParNom(plants, nom);
+    console.log(`${resultats.length} espèce(s) dont le nom contient « ${nom} » :`);
+    console.log(listerPlants(resultats));
   } else if (choix === '3') {
     const reponse = await demander(`Groupe botanique (${GROUPES.join(' ou ')}) : `);
     if (reponse === null) {
@@ -125,9 +126,9 @@ async function trier(plants) {
   }
   
   if (choix === '1') {
-    console.log(listerPlants(trierParNombrePlants(plants, true)));
+    console.log(listerPlants(trierParNombrePlants(plants)));
   } else if (choix === '2') {
-    console.log(listerPlants(plantesTriees));
+    console.log(listerPlants(trierParNombrePlantsDecroissant(plants)));
   } else {
     console.log('Choix inconnu : retour au menu.');
   }
@@ -135,32 +136,141 @@ async function trier(plants) {
 function synthese(plants) {
   console.log("--- Synthèse de l'inventaire ---");
   console.log(`Nombre d'espèces : ${plants.length}`);
-  console.log(`Stock total : ${totalPlants(plants)} plants`);}`);
+  console.log(`Stock total : ${totalPlants(plants)} plants`);
 
   console.log('par groupe botanique :');
   for (const [groupe, resume] of Object.entries(syntheseParGroupe(plants))) {
-    console.log(`  - ${groupe} : ${resume.especes} espèce(s), ${resume.nombre} plants`);
+    console.log(`  - ${groupe} : ${resume.especes} espèce(s), ${resume.plants} plants`);
   }
 
   const fourni = groupeLePlusFourni(plants);
-  if (fourni !== null) {
+  if (fourni === null) {
     console.log('Groupe le plus fourni : aucune donnée');
-  }else {
-  console.log(`Groupe le plus fourni :(${fourni.groupe} (${fourni.plants} plants)`);
+  } else {
+    console.log(`Groupe le plus fourni : ${fourni.groupe} (${fourni.plants} plants)`);
+  }
+
+  const abondante = especeLaPlusAbondante(plants);
+  if (abondante === null) {
+    console.log('Espèce la plus abondante : aucune donnée');
+  } else {
+    console.log(`Espèce la plus abondante : ${formaterPlant(abondante)}`);
+  }
+
+  const faibles = stocksFaibles(plants, SEUIL_STOCK_FAIBLE);
+  console.log(`Stocks faibles (≤ ${SEUIL_STOCK_FAIBLE} plants) : ${faibles.length}`);
+  for (const plant of faibles) {
+    console.log(`  ${formaterPlant(plant)}`);
+  }
+  console.log(`Rappel : le seuil de ${SEUIL_STOCK_FAIBLE} plants est un repère pédagogique de suivi, pas une recommandation de production.`);
 }
 
-const abondante = especeLaPlusAbondante(plants);
-if (abondante !== null) {
-  console.log(Espèce la plus abondante : aucune donnée');
-} else {
-  console.log('Espèce la plus abondante :${formatPlant(abondante)});
+async function supprimer(plants) {
+  const reponse = await demander('Identifiant : ');
+  if (reponse === null) {
+    return;
+  }
+  const id = reponse.toUpperCase();
+  const retire = supprimerPlant(plants, id);
+  if (retire === undefined) {
+    console.log(`Plant ${id} introuvable.`);
+    return;
+  }
+  await enregistrerJson(FICHIER_DONNEES, plants);
+  console.log(`Plant ${id} supprimé. L'inventaire compte ${plants.length} espèce(s).`);
 }
 
-const faibles = stocksFaibles(plants, SEUIL_STOCK_FAIBLE);
-console.log(`Stocks faibles(≤ ${SEUIL_STOCK_FAIBLE} plants)   : ${faibles.length}`);
-for (const plant of faibles) {
-  console.log(`  ${formatPlant(plant)}`);
-}
-  console.log(`Rappel : le seuil de ${SEUIL_STOCK_FAIBLE} plants est un repère pedagogique de suivi, pas une recommandation de production.`);
+async function modifier(plants) {
+  const reponseId = await demander('Identifiant : ');
+  if (reponseId === null) {
+    return;
+  }
+  const champ = await demander('Champ à modifier (nomCommun, groupe, nombrePlants, dateReleve) : ');
+  if (champ === null) {
+    return;
+  }
+  const reponseValeur = await demander('Nouvelle valeur : ');
+  if (reponseValeur === null) {
+    return;
+  }
+
+  const id = reponseId.toUpperCase();
+  const valeur = champ === 'nomCommun' || champ === 'groupe' ? reponseValeur.toLowerCase() : reponseValeur;
+  const erreurs = modifierPlant(plants, id, champ, valeur);
+  if (erreurs.length === 0) {
+    await enregistrerJson(FICHIER_DONNEES, plants);
+    console.log(`Plant ${id} modifié.`);
+  } else {
+    console.log('Modification refusée :');
+    for (const erreur of erreurs) {
+      console.log(`  - ${erreur}`);
+    }
+  }
 }
 
+async function charger() {
+  try {
+    const plants = await chargerJson(FICHIER_DONNEES);
+    if (!Array.isArray(plants)) {
+      throw new Error("le fichier ne contient pas un tableau");
+    }
+    console.log(`${plants.length} espèce(s) chargée(s) depuis ${FICHIER_DONNEES}.`);
+    return plants;
+  } catch (erreur) {
+    console.log(`Impossible de lire ${FICHIER_DONNEES} : ${erreur.message}. L'inventaire démarre vide.`);
+    return [];
+  }
+}
+
+async function main() {
+  ouvrirSaisie();
+  afficherAccueil();
+  const plants = await charger();
+
+  while (true) {
+    afficherMenu();
+    const choix = await demander('Votre choix : ');
+    if (choix === null || choix === '0') {
+      console.log('Au revoir !');
+      break;
+    }
+
+    try {
+      switch (choix) {
+        case '1':
+          await ajouter(plants);
+          break;
+        case '2':
+          lister(plants);
+          break;
+        case '3':
+          await rechercher(plants);
+          break;
+        case '4':
+          await trier(plants);
+          break;
+        case '5':
+          synthese(plants);
+          break;
+        case '6':
+          await supprimer(plants);
+          break;
+        case '7':
+          await modifier(plants);
+          break;
+        default:
+          console.log(`Choix inconnu : « ${choix} ». Tapez un chiffre du menu.`);
+      }
+    } catch (erreur) {
+      if (erreur.message.startsWith('TODO')) {
+        console.log(`À compléter : ${erreur.message}`);
+      } else {
+        console.log(`Erreur inattendue : ${erreur.message}`);
+      }
+    }
+  }
+
+  fermerSaisie();
+}
+
+main();
