@@ -115,3 +115,52 @@ async function rechercher(plants) {
   }
 }
 
+async function trier(plants) {
+  console.log('--- Trier ---');
+  console.log('1. par nombre de plants (croissant)');
+  console.log('2. par nombre de plants (décroissant)');
+  const choix = await demander('Votre choix : ');
+  if (choix === null) {
+    return;
+  }
+  
+  if (choix === '1') {
+    console.log(listerPlants(trierParNombrePlants(plants, true)));
+  } else if (choix === '2') {
+    console.log(listerPlants(plantesTriees));
+  } else {
+    console.log('Choix inconnu : retour au menu.');
+  }
+}
+function synthese(plants) {
+  console.log("--- Synthèse de l'inventaire ---");
+  console.log(`Nombre d'espèces : ${plants.length}`);
+  console.log(`Stock total : ${totalPlants(plants)} plants`);}`);
+
+  console.log('par groupe botanique :');
+  for (const [groupe, resume] of Object.entries(syntheseParGroupe(plants))) {
+    console.log(`  - ${groupe} : ${resume.especes} espèce(s), ${resume.nombre} plants`);
+  }
+
+  const fourni = groupeLePlusFourni(plants);
+  if (fourni !== null) {
+    console.log('Groupe le plus fourni : aucune donnée');
+  }else {
+  console.log(`Groupe le plus fourni :(${fourni.groupe} (${fourni.plants} plants)`);
+}
+
+const abondante = especeLaPlusAbondante(plants);
+if (abondante !== null) {
+  console.log(Espèce la plus abondante : aucune donnée');
+} else {
+  console.log('Espèce la plus abondante :${formatPlant(abondante)});
+}
+
+const faibles = stocksFaibles(plants, SEUIL_STOCK_FAIBLE);
+console.log(`Stocks faibles(≤ ${SEUIL_STOCK_FAIBLE} plants)   : ${faibles.length}`);
+for (const plant of faibles) {
+  console.log(`  ${formatPlant(plant)}`);
+}
+  console.log(`Rappel : le seuil de ${SEUIL_STOCK_FAIBLE} plants est un repère pedagogique de suivi, pas une recommandation de production.`);
+}
+
