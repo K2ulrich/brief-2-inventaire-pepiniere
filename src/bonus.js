@@ -11,7 +11,11 @@ export const CHAMPS_MODIFIABLES = ['nomCommun', 'groupe', 'nombrePlants', 'dateR
 // Supprime de l'inventaire le plant qui a cet identifiant.
 // Renvoie le plant supprimé, ou undefined s'il n'existe pas (l'inventaire ne change pas).
 export function supprimerPlant(plants, id) {
-  throw new Error('TODO Bonus : coder supprimerPlant dans src/bonus.js');
+  const index = plants.findIndex(plant => plant.id === id);
+  if (index === -1) {
+    return undefined;
+  }
+  return plants.splice(position, 1)[0];
 }
 
 // Modifie un champ d'un plant. valeur arrive sous forme de TEXTE, comme dans le menu.
@@ -20,18 +24,43 @@ export function supprimerPlant(plants, id) {
 // CHAMPS_MODIFIABLES · valeur refusée par les règles de l'ajout. S'il y a une erreur, rien ne change.
 // nombrePlants est enregistré comme un nombre.
 export function modifierPlant(plants, id, champ, valeur) {
-  throw new Error('TODO Bonus : coder modifierPlant dans src/bonus.js');
+  const plant = trouverParId(plants, id);
+  if (plant === undefined) {
+    return [`Le plant ${id} est introuvable.`];
+  }
+  if (champ === 'id') {
+    return ["Le champ 'id' ne peut pas être modifié."];
+  }
+  if (!CHAMPS_MODIFIABLES.includes(champ)) {
+    return [`Champ inconnu '${champ}'. Champs possibles : ${CHAMPS_MODIFIABLES.join(', ')}.`];
+  }
+
+  const saisie = { ...plant, nombrePlants: String(plant.nombrePlants), [champ]: valeur };
+  const autresPlants = plants.filter((autre) => autre !== plant);
+  const erreurs = verifierPlant(saisie, autresPlants);
+  if (erreurs.length > 0) {
+    return erreurs;
+  }
+
+  plant[champ] = creerPlant(saisie)[champ];
+  return [];
 }
 
 // Renvoie une COPIE triée par nombre de plants décroissant.
 // Deux plants de même nombre gardent leur ordre d'origine. Le tableau reçu ne change pas.
 export function trierParNombrePlantsDecroissant(plants) {
-  throw new Error('TODO Bonus : coder trierParNombrePlantsDecroissant dans src/bonus.js');
+  return [...plants].sort((a, b) => b.nombrePlants - a.nombrePlants);
 }
 
 // Renvoie { groupe, plants } pour le groupe botanique qui a le plus de plants au total,
 // le premier rencontré en cas d'égalité, ou null si l'inventaire est vide.
 // Exemple : groupeLePlusFourni(donnees) → { groupe: 'angiosperme', plants: 222 }
 export function groupeLePlusFourni(plants) {
-  throw new Error('TODO Bonus : coder groupeLePlusFourni dans src/bonus.js');
+  let meilleur = null;
+  for (const [groupe, resume] of Object.entries(syntheseParGroupe(plants))) {
+    if (meilleur === null || resume.plants > meilleur.plants) {
+      meilleur = { groupe, plants: resume.plants };
+    }
+  }
+  return meilleur;
 }
