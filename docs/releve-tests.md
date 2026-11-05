@@ -2,7 +2,7 @@
 
 > Écrivez le résultat attendu avant d'essayer. Un écart n'est pas une faute : notez-le, corrigez, refaites le test.
 
-**Calculs à la main** : stock total 240 plants ; angiospermes 8 espèces et 222 plants ; gymnosperme 2 espèces et 18 plants ; stocks faible N09 et N10 ; espèce la plus abondante NO4 (tomate, 50). Le programme donne les memes résultats (choix 5).
+**Calculs à la main** : stock total 240 plants ; angiospermes 8 espèces et 222 plants ; gymnosperme 2 espèces et 18 plants ; stocks faible N09 et N10 ; espèce la plus abondante NO4 (tomate, 50). Le programme donne les memes résultats (choix 5). soit (50+25+18+12+30+45+20+22+8+10)= 240
 
 **Tests automatiques** : `npm test` donne 37 tests réussis, 0 échec (outils 3, stockage 3, registre 11, recherche 5, synthèse 6, bonus 9).
 
