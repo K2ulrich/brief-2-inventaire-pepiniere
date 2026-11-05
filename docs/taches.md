@@ -15,4 +15,4 @@
 
 | Bonus | | | |
 
-**Blocages** (le message exact, ce que j'ai essayé, la solution) : ✏️
+**Blocages**  app.js ne s'exécutait pas car la fonction main() était appelée sans être définie, et l'import de chargerJson était dupliqué. Résolu en définissant main() avant son appel et en supprimant l'import en double.
