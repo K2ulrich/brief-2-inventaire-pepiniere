@@ -2,7 +2,7 @@
 // Fiche : fiches/7-bonus.md · Vérifier : npm run test:bonus
 // Pas de modèle pour ce fichier : à vous de combiner ce que vous avez appris.
 import { versNombre } from './outils.js';
-import { trouverParId, verifierPlant } from './registre.js';
+import { trouverParId, verifierPlant, creerPlant } from './registre.js';
 import { syntheseParGroupe } from './synthese.js';
 
 // Les champs qu'on a le droit de modifier. L'identifiant n'en fait pas partie.
@@ -15,7 +15,7 @@ export function supprimerPlant(plants, id) {
   if (index === -1) {
     return undefined;
   }
-  return plants.splice(position, 1)[0];
+  return plants.splice(index, 1)[0];
 }
 
 // Modifie un champ d'un plant. valeur arrive sous forme de TEXTE, comme dans le menu.
