@@ -38,8 +38,8 @@ git push -u origin main
 - [x] Rechercher par code ou par nom ; filtrer par groupe botanique
 - [x] Trier par nombre de plants
 - [x] Synthèse : stock total, espèces et plants par groupe, espèce la plus abondante, stocks faibles (≤ 10 plants)
-- [ ] Bonus : supprimer et modifier un plant (choix 6 et 7)
-- [ ] Bonus : tri décroissant, groupe le plus fourni
+- [x] Bonus : supprimer et modifier un plant (choix 6 et 7)
+- [x] Bonus : tri décroissant, groupe le plus fourni
 
 ## Données
 
@@ -49,7 +49,7 @@ Fichier `donnees/plants.json` : 10 lignes au depart ( une ligne = une espèce et
 
 ## Limites
 
-- Le seuil de 10 plants est un repère de suivi pédagogique, pas une recommandation de production.
+- Le seuil de 10 espèces est un repère de suivi pédagogique, pas une recommandation de production.
 - Les groupes botaniques sont fournis et validés par le coach : le programme n'identifie aucune espèce.
 - Un seul utilisateur à la fois ; le fichier JSON n'est pas protégé contre une modification simultanée.
 - Pas d'historique : chaque espèce a une seule ligne avec une seule date de relevé.
